@@ -163,26 +163,12 @@ sub matchlist {
 
    return unless @{ $self->{matches} };
 
-   my $width = 0;
-
-   my $i = 0;
+   # Create overlays on each URL link.
+   $self->{overlays} = [];
    for my $match (@{ $self->{matches} }) {
-      my $text = $match->[4];
-      my $w = $self->strwidth ("$i-$text");
-
-      $width = $w if $w > $width;
-      $i++;
-   }
-
-   $width = $self->ncol - 2 if $width > $self->ncol - 2;
-
-   $self->{overlay} = $self->overlay (0, 0, $width, scalar (@{ $self->{matches} }), urxvt::OVERLAY_RSTYLE, 2);
-   my $i = 0;
-   for my $match (@{ $self->{matches} }) {
-      my $text = $match->[4];
-
-      $self->{overlay}->set (0, $i, "$i-$text");
-      $i++;
+      my $hint = $self->overlay (@$match[1], @$match[0], 3, 1, urxvt::OVERLAY_RSTYLE, 0);
+      $hint->set (0, 0, 'AA');
+      push $self->{overlays}, $hint;
    }
 
    $self->enable (key_press => \&matchlist_key_press);
