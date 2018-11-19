@@ -3,6 +3,7 @@
 # Author: Tim Pope <rxvt-unicodeNOSPAM@tpope.org>
 #         Bob Farrell <robertanthonyfarrell@gmail.com>
 #         Emanuele Giaquinta
+#         Congbin Guo <guocongbin@gmail.com>
 
 #:META:RESOURCE:%.launcher:string:default launcher command
 #:META:RESOURCE:%.button:string:the mouse button used to activate a match
@@ -41,19 +42,19 @@ input/output is suspended and the following bindings are recognized:
 
 =over 4
 
-=item C<Up>
+=item C<Up> or 'k'
 
 Search for a match upwards.
 
-=item C<Down>
+=item C<Down> or 'j'
 
 Search for a match downwards.
 
-=item C<Home>
+=item C<Home> or 'g'
 
 Jump to the topmost match.
 
-=item C<End>
+=item C<End> or 'G'
 
 Jump to the bottommost match.
 
