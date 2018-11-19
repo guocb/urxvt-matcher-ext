@@ -394,8 +394,8 @@ sub select_enter {
       refresh_end   => \&select_refresh,
    );
 
-   $self->{overlay} = $self->overlay (0, 1, $self->ncol, 10, urxvt::OVERLAY_RSTYLE, 0);
-   $self->{overlay}->set (10, 3, "match-select");
+   $self->{overlay} = $self->overlay (0, -1, $self->ncol, 1, urxvt::OVERLAY_RSTYLE, 0);
+   $self->{overlay}->set (0, 0, "match-select (using Up/Down/Home/End or j/k/g/G to navigate)");
 }
 
 sub select_leave {
@@ -462,11 +462,11 @@ sub select_key_press {
    } elsif ($keysym == 0xff1b) { # escape
       $self->view_start ($self->{view_start});
       $self->select_leave;
-   } elsif ($keysym == 0xff50 || $key == 'g') { # home
+   } elsif ($keysym == 0xff50 || $keysym == 0x67) { # home or 'g'
       $self->select_search (+1, $self->top_row)
-   } elsif ($keysym == 0xff57 || $key == 'G') { # end
+   } elsif ($keysym == 0xff57 || $keysym == 0x47) { # end or 'G'
       $self->select_search (-1, $self->nrow - 1)
-   } elsif ($keysym == 0xff52 || $key == 'k') { # up
+   } elsif ($keysym == 0xff52 || $keysym == 0x6b) { # up or 'k'
       if ($self->{id} > 0) {
          $self->{id}--;
          $self->want_refresh;
@@ -475,7 +475,7 @@ sub select_key_press {
          $self->select_search (-1, $line->beg - 1)
             if $line->beg > $self->top_row;
       }
-   } elsif ($keysym == 0xff54 || $key == 'j') { # down
+   } elsif ($keysym == 0xff54 || $keysym == 0x6a) { # down or 'j'
       if ($self->{id} < @{ $self->{matches} } - 1) {
          $self->{id}++;
          $self->want_refresh;
