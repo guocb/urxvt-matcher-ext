@@ -98,8 +98,27 @@ my $url =
       )+
    }x;
 
+# Generate hints using defined meta characters.
+sub gen_hints {
+}
+
 sub matchlist_key_press {
    my ($self, $event, $keysym, $octets) = @_;
+
+   # Undo the last hint typing.
+   if ($keysym == 0x08) {  # backspace
+      if ($self->{key_pressed}) {
+         pop $self->{key_pressed};
+         refresh_hints;
+      }
+      return;
+   }
+   for my $hint (@{ $self->{hints} }) {
+      my ($overlay, $matched_text, $hint_text, $visible) = @_;
+      if (! $visible) {
+         continue
+      }
+   }
 
    delete $self->{overlay};
    $self->disable ("key_press");
@@ -156,7 +175,6 @@ sub matchlist {
 
       for (sort { $b->[0] <=> $a->[0] or $b->[1] <=> $a->[1] } @matches) {
          push @{ $self->{matches} }, $_;
-         last if @{ $self->{matches} } == 10;
       }
 
       $row = $line->beg - 1;
@@ -164,14 +182,17 @@ sub matchlist {
 
    return unless @{ $self->{matches} };
 
-   # Create overlays on each URL link.
-   $self->{overlays} = [];
+   # Create overlays for each URL link.
+   $self->{hints} = [];
    for my $match (@{ $self->{matches} }) {
-      my $hint = $self->overlay (@$match[1], @$match[0], 3, 1, urxvt::OVERLAY_RSTYLE, 0);
-      $hint->set (0, 0, 'AA');
-      push $self->{overlays}, $hint;
+      my $overlay = $self->overlay (@$match[1], @$match[0], 3, 1,
+                                    urxvt::OVERLAY_RSTYLE, 0);
+      $overlay->set (0, 0, 'AA');
+      # [ hint_overlay, url_text, hint_text, visible ]
+      push $self->{hints}, [ $overlay, @$match[4], 'AA', 1 ];
    }
 
+   $self->{key_pressed} = [];
    $self->enable (key_press => \&matchlist_key_press);
 }
 
